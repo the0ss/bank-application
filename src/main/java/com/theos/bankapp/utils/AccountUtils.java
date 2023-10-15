@@ -14,6 +14,15 @@ public class AccountUtils {
 
     public static final String ACCOUNT_FOUND_CODE="004";
     public static final String ACCOUNT_FOUND_MESSAGE="User Found.";
+
+    public static final String ACCOUNT_CREDIT_SUCCESS="005";
+    public static final String ACCOUNT_CREDIT_MESSAGE="User Account Credited";
+
+    public static final String INSUFFICIENT_BALANCE_CODE="006";
+    public static final String INSUFFICIENT_BALANCE_MESSAGE="Insufficient amount!!";
+
+    public static final String ACCOUNT_DEBIT_SUCCESS="007";
+    public static final String ACCOUNT_DEBIT_MESSAGE="Debit successful";
     public static String generateAccountNumber(){
         /*
         *  2023 + randomSixDigit

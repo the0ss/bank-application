@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.theos.bankapp.dto.BankResponse;
+import com.theos.bankapp.dto.CreditDebitRequest;
 import com.theos.bankapp.dto.EnquiryRequest;
 import com.theos.bankapp.dto.UserRequest;
 import com.theos.bankapp.service.impl.UserService;
@@ -30,6 +31,14 @@ public class UserController {
     @GetMapping("/nameEnquiry")
     public String nameEnquiry(@RequestBody EnquiryRequest enquiryRequest){
         return userService.nameEnquiry(enquiryRequest);
+    }
+    @PostMapping("/credit")
+    public BankResponse creditAccount(@RequestBody CreditDebitRequest creditDebitRequest){
+        return userService.creditAccount(creditDebitRequest);
+    }
+    @PostMapping("/debit")
+    public BankResponse debitAccount(@RequestBody CreditDebitRequest creditDebitRequest){
+        return userService.debitAccount(creditDebitRequest);
     }
 
 }
