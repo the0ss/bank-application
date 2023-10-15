@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 
 import com.theos.bankapp.dto.AccountInfo;
 import com.theos.bankapp.dto.BankResponse;
+import com.theos.bankapp.dto.EmailDetails;
 import com.theos.bankapp.dto.UserRequest;
 import com.theos.bankapp.entity.user;
 import com.theos.bankapp.repository.UserRepository;
@@ -17,6 +18,9 @@ public class UserServiceImpl implements UserService{
 
     @Autowired
     private UserRepository userRepository;
+
+    @Autowired 
+    EmailService emailService;
 
     @Override
     public BankResponse createAcount(UserRequest userRequest) {
@@ -47,6 +51,13 @@ public class UserServiceImpl implements UserService{
                         .build();
 
             user savedUser=userRepository.save(newUser);
+            EmailDetails emailDetails=EmailDetails.builder()
+                                        .recipient(savedUser.getEmail())
+                                        .subject("ACCOUNT CREATION")
+                                        .messageBody("Congrats mf ur account opened.\n"+ savedUser.getFirstName())
+                                        .build();
+            emailService.sendEmailAlerts(emailDetails);                
+
             return BankResponse.builder()
                             .responceCode(AccountUtils.ACCOUNT_CREATION_SUCCESS)
                             .responceMessage(AccountUtils.ACCOUNT_CREATION_MESSAGE)
