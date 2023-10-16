@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.theos.bankapp.dto.BankResponse;
 import com.theos.bankapp.dto.CreditDebitRequest;
 import com.theos.bankapp.dto.EnquiryRequest;
+import com.theos.bankapp.dto.LoginDto;
 import com.theos.bankapp.dto.TransferRequest;
 import com.theos.bankapp.dto.UserRequest;
 import com.theos.bankapp.service.impl.UserService;
@@ -65,6 +66,10 @@ public class UserController {
     @PostMapping("transfer")
     public BankResponse transfer(@RequestBody TransferRequest transferRequest){
         return userService.transfer(transferRequest);
+    }
+    @PostMapping("/login")
+    public BankResponse login(@RequestBody LoginDto loginDto){
+        return userService.login(loginDto);
     }
 
 }
