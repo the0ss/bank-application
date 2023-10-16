@@ -8,7 +8,6 @@ import java.time.format.DateTimeFormatter;
 import java.util.List;
 import org.springframework.stereotype.Component;
 
-import com.fasterxml.jackson.databind.introspect.TypeResolutionContext.Basic;
 import com.itextpdf.text.BaseColor;
 import com.itextpdf.text.Document;
 import com.itextpdf.text.DocumentException;
@@ -18,6 +17,7 @@ import com.itextpdf.text.Rectangle;
 import com.itextpdf.text.pdf.PdfPCell;
 import com.itextpdf.text.pdf.PdfPTable;
 import com.itextpdf.text.pdf.PdfWriter;
+import com.theos.bankapp.dto.EmailDetails;
 import com.theos.bankapp.entity.Transaction;
 import com.theos.bankapp.entity.User;
 import com.theos.bankapp.repository.TransactionRepository;
@@ -37,6 +37,7 @@ public class BankStatement {
      */
     private TransactionRepository transactionRepository;
     private UserRepository userRepository;
+    private EmailService emailService;
     private static final String FILE="C:\\Users\\91878\\OneDrive\\Desktop\\MyStatement.pdf";
 
     public List<Transaction> gererateSatement(String accountNo,String startDate, String endDate) throws FileNotFoundException, DocumentException{
@@ -116,6 +117,14 @@ public class BankStatement {
 
         document.close();
 
+        EmailDetails emailDetails=EmailDetails.builder()
+                    .recipient(user.getEmail())
+                    .subject("STATEMENT OF ACCOUNT")
+                    .messageBody("Kindly find your requested statement attachted.")
+                    .attachment(FILE)
+                    .build();
+
+        emailService.sendEmailWithAttachments(emailDetails);
         return transactionList;
     }
 }
