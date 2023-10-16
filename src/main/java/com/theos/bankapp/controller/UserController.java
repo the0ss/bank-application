@@ -14,17 +14,38 @@ import com.theos.bankapp.dto.TransferRequest;
 import com.theos.bankapp.dto.UserRequest;
 import com.theos.bankapp.service.impl.UserService;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.tags.Tag;
+
 @RestController
 @RequestMapping("/api/users")
+@Tag(name="User Management APIs")
 public class UserController {
 
     @Autowired
     UserService userService;
 
+    @Operation(
+        summary = "Create new User Account",
+        description= "Creating a new user and assiging an account ID"
+    )
+    @ApiResponse(
+        responseCode = "201",
+        description = "Http status 201 CREATED"
+    )
     @PostMapping
     public BankResponse createAccount(@RequestBody UserRequest userRequest){
         return userService.createAcount(userRequest);
     }
+    @Operation(
+        summary = "Balance Enquiry",
+        description= "Given a Account no , check how much the user has"
+    )
+    @ApiResponse(
+        responseCode = "200",
+        description = "Http status 200 CREATED"
+    )
     @GetMapping("/balanceEnquiry")
     public BankResponse balanceEnquiry(@RequestBody EnquiryRequest enquiryRequest){
         return userService.balanceEnquiry(enquiryRequest); 
