@@ -23,6 +23,9 @@ public class AccountUtils {
 
     public static final String ACCOUNT_DEBIT_SUCCESS="007";
     public static final String ACCOUNT_DEBIT_MESSAGE="Debit successful";
+
+    public static final String TRANSFER_SUCCESS_CODE="008";
+    public static final String TRANSFER_SUCCESS_MESSAGE="Transfer successful.";
     public static String generateAccountNumber(){
         /*
         *  2023 + randomSixDigit

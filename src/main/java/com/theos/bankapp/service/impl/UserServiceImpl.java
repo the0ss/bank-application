@@ -11,6 +11,7 @@ import com.theos.bankapp.dto.BankResponse;
 import com.theos.bankapp.dto.CreditDebitRequest;
 import com.theos.bankapp.dto.EmailDetails;
 import com.theos.bankapp.dto.EnquiryRequest;
+import com.theos.bankapp.dto.TransferRequest;
 import com.theos.bankapp.dto.UserRequest;
 import com.theos.bankapp.entity.user;
 import com.theos.bankapp.repository.UserRepository;
@@ -162,6 +163,55 @@ public class UserServiceImpl implements UserService{
                                           .accountBalance(userToDebit.getAccountBalance())
                                           .accountNumber(creditDebitRequest.getAccountNumber())
                                           .build())
+                        .build();
+    }
+
+    @Override
+    public BankResponse transfer(TransferRequest transferRequest) {
+      // we are logged in from the transferring account
+      // check if the debit amount is not greater than the account balance
+      // get the account of the credit (check if exist)
+      // credit and debit the amount
+      boolean isDestinationAccountExists=userRepository.existsByAccountNumber(transferRequest.getAccountNumberTo());
+      if(!isDestinationAccountExists){
+        return BankResponse.builder()
+                        .responceCode(AccountUtils.ACCOUNT_NOT_EXISTS_CODE)
+                        .responceMessage(AccountUtils.ACCOUNT_NOT_EXISTS_MESSAGE)
+                        .accountInfo(null)
+                        .build();
+      }
+      user sourceAccountUser=userRepository.findByAccountNumber(transferRequest.getAccountNumberFrom());
+      if(transferRequest.getAmount().compareTo(sourceAccountUser.getAccountBalance())>0){
+          return BankResponse.builder()
+                        .responceCode(AccountUtils.INSUFFICIENT_BALANCE_CODE)
+                        .responceMessage(AccountUtils.INSUFFICIENT_BALANCE_MESSAGE)
+                        .accountInfo(null)
+                        .build();
+      }
+      sourceAccountUser.setAccountBalance(sourceAccountUser.getAccountBalance().subtract(transferRequest.getAmount()));
+      userRepository.save(sourceAccountUser);
+
+      EmailDetails debitAlert=EmailDetails.builder()
+                                  .subject("DEBIT ALERT")
+                                  .recipient(sourceAccountUser.getEmail())
+                                  .messageBody("The sum of "+transferRequest.getAmount()+"has been deducted from your account.")
+                                  .build();
+      emailService.sendEmailAlerts(debitAlert);
+
+      user destinationAccountUser=userRepository.findByAccountNumber(transferRequest.getAccountNumberTo());
+      destinationAccountUser.setAccountBalance(destinationAccountUser.getAccountBalance().add(transferRequest.getAmount()));
+      userRepository.save(destinationAccountUser);
+      EmailDetails creditAlert=EmailDetails.builder()
+                                  .subject("CREDIT ALERT")
+                                  .recipient(destinationAccountUser.getEmail())
+                                  .messageBody("The sum of "+transferRequest.getAmount()+"has been credited to your account.")
+                                  .build();
+      emailService.sendEmailAlerts(creditAlert);
+
+      return BankResponse.builder()
+                        .responceCode(AccountUtils.TRANSFER_SUCCESS_CODE)
+                        .responceMessage(AccountUtils.TRANSFER_SUCCESS_MESSAGE)
+                        .accountInfo(null)
                         .build();
     }
 
